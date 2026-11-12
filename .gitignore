@@ -1,19 +1,21 @@
-data/raw/
 node_modules/
 .next/
-out/
-__pycache__/
+dist/
+coverage/
+playwright-report/
+test-results/
+.env
+.env.*
+!.env.example
 .DS_Store
-.env*
-.venv/
-evaluation/flame-vision/candidates/
+*.log
+*.blend1
+*.fbx.tmp
+.tripo/
+.cache/
+*.tsbuildinfo
 
-# Kept locally, not published (pipelines, tests, data and docs are public so people can contribute)
-/film/
-/evaluation/
-/openapi.yaml
-/stackhawk.yml
-/docs/screenshots/*.mjs
-/apps/web/AGENTS.md
-/apps/web/CLAUDE.md
-/apps/web/README.md
+# Meshy downloads stay local until QA + rights approval
+tools/meshy/incoming/
+docs/qa/screenshots/m4/recordings/
+docs/qa/screenshots/ignition/recordings/
