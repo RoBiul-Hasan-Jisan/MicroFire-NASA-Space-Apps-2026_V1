@@ -1,34 +1,21 @@
 {
-  "name": "microfire-atlas-web",
+  "name": "@microfire/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "test": "node --test lib/*.test.ts",
-    "typecheck": "next typegen && tsc --noEmit",
-    "model-lab": "node lib/model-lab-run.ts"
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build --webpack",
+    "start": "next start --hostname 127.0.0.1",
+    "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.131.0",
-    "next": "16.3.8",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "three": "^0.186.1"
-  },
-  "devDependencies": {
-    "@playwright/test": "^1.63.0",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@types/three": "^0.186.0",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "^14.2.35",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  },
-  "type": "module"
+    "@microfire/game-core": "0.1.0",
+    "@microfire/science": "0.1.0",
+    "@microfire/shared": "0.1.0",
+    "next": "16.4.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "0.0.1",
+    "three": "0.186.1"
+  }
 }
