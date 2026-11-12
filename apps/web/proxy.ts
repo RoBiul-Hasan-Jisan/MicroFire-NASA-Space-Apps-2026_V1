@@ -1,42 +1,14 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from 'next/server';
+import { reviewFlagFor, reviewRouteAllowed } from './lib/review-policy';
 
-/**
- * Strict CSP with a fresh nonce per request. Next.js reads the nonce from the request's
- * CSP header and stamps it on its own inline scripts, so 'unsafe-inline' is not needed for scripts.
- * Components must not use inline style attributes (use SVG attributes or classes): style-src has no 'unsafe-inline'.
- */
+// Review routes fail closed before anything renders (no page code, metadata or fixture read runs for a denied
+// request). A denial is a plain 404 for every request kind: a rewrite would answer the client router's RSC fetch
+// with a redirect instead. These addresses are unlisted, so no styled not-found page is needed.
 export function proxy(request: NextRequest) {
-  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
-  const isDev = process.env.NODE_ENV === "development";
-  const csp = [
-    "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""}`,
-    `style-src 'self' 'nonce-${nonce}'`,
-    "img-src 'self' blob: data:",
-    "font-src 'self'",
-    "connect-src 'self'",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "frame-ancestors 'none'",
-  ].join("; ");
-
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-nonce", nonce);
-  requestHeaders.set("Content-Security-Policy", csp);
-  const response = NextResponse.next({ request: { headers: requestHeaders } });
-  response.headers.set("Content-Security-Policy", csp);
-  return response;
+  const flag = reviewFlagFor(request.nextUrl.pathname);
+  if (flag && !reviewRouteAllowed(flag, process.env, request.headers.get('host'), request.headers.get('x-forwarded-host')))
+    return new NextResponse('Not found', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } });
+  return NextResponse.next();
 }
 
-export const config = {
-  matcher: [
-    {
-      source: "/((?!_next/static|_next/image|favicon.ico).*)",
-      missing: [
-        { type: "header", key: "next-router-prefetch" },
-        { type: "header", key: "purpose", value: "prefetch" },
-      ],
-    },
-  ],
-};
+export const config = { matcher: ['/design', '/design/:path*', '/m2-fixtures', '/m2-fixtures/:path*'] };
